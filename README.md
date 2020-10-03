@@ -1,0 +1,1 @@
+# kruzhok_picture_analyzer
