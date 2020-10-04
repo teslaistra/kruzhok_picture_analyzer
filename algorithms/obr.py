@@ -8,31 +8,48 @@ import matplotlib.pyplot as plt
 
 def check(logo_path: str, image_path: str) -> bool:
     logo = cv2.imread(logo_path)
+    logo = cv2.resize(logo, (0, 0), fx=0.4, fy=0.4)
+
     image = cv2.imread(image_path)
 
+    h, w,m = image.shape
+
+    if h > 1000:
+        image = cv2.resize(image, (0, 0), fx=0.7, fy=0.7)
     grey_logo = cv2.cvtColor(logo, cv2.COLOR_BGR2GRAY)
     grey_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-    _, mask = cv2.threshold(grey_image, 230, 255, cv2.THRESH_BINARY_INV)
+    _, mask = cv2.threshold(grey_image, 220, 220, cv2.THRESH_BINARY_INV)
     _, mask_l = cv2.threshold(grey_logo, 230, 255, cv2.THRESH_BINARY_INV)
 
+    #mask_l = cv2.Canny(mask_l, 689, 1322)
     canny_image = cv2.Canny(mask, 689, 1322)
     (tH, tW) = canny_image.shape[:2]
 
-    height, width = grey_logo.shape[::]
 
-    res = cv2.matchTemplate(grey_image, grey_logo, cv2.TM_SQDIFF)
-    plt.imshow(res, cmap='gray')
+    while True:
+        mask_l = cv2.resize(mask_l, (0, 0), fx=0.95, fy=0.95)
 
-    min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+        res = cv2.matchTemplate(mask, mask_l, cv2.TM_SQDIFF)
+        plt.imshow(res, cmap='gray')
 
-    top_left = min_loc  # Change to max_loc for all except for TM_SQDIFF
-    bottom_right = (top_left[0] + width, top_left[1] + height)
-    cv2.rectangle(grey_image, top_left, bottom_right, (255, 0, 0), 2)
+        min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
 
-    cv2.imshow("Matched image", grey_image)
-    cv2.waitKey()
-    cv2.destroyAllWindows()
+        top_left = min_loc  # Change to max_loc for all except for TM_SQDIFF
+        height, width = mask_l.shape[::]
+
+        bottom_right = (top_left[0] + width, top_left[1] + height)
+        newImage = mask.copy()
+        cv2.rectangle(newImage, top_left, bottom_right, (255, 0,0 ), 2)
+
+        cv2.imshow("Matched image", newImage)
+        cv2.imshow('fff',mask_l)
+        cv2.waitKey()
+        cv2.destroyAllWindows()
+        h, w = mask_l.shape
+
+        if h < 150:
+            break
     return
 
 
