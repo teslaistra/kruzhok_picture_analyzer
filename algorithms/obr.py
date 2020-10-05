@@ -60,7 +60,7 @@ def check(logo_path: str, image_path: str, debug: bool) -> bool:
 
         h, w = mask_l.shape
 
-        #если лого совсем крошечный, то уходим
+        # если лого совсем крошечный, то уходим
         if h < 150:
             return False
 

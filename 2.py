@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-cap =  cv2.imread("w13.jpg")
+cap =  cv2.imread("kd1.jpg")
 
 template = cv2.imread("33.jpg", cv2.IMREAD_GRAYSCALE)
 template1 = cv2.imread("44.jpg", cv2.IMREAD_GRAYSCALE)
@@ -46,8 +46,8 @@ for pt in zip(*loc[::-1]):
     cv2.rectangle(cap, pt, (pt[0] + w, pt[1] + h), (0, 255, 0), 3)
 '_____'
 
-cv2.imwrite('yyy'+'.jpg',cap)
+cv2.imshow('yyy'+'.jpg',cap)
 
-key = cv2.waitKey(1)
+key = cv2.waitKey()
 
 cv2.destroyAllWindows()
