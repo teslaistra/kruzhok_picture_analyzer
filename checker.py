@@ -7,16 +7,16 @@ import algorithms
 
 parser = argparse.ArgumentParser(description='Process image to find KRUZHOK logo')
 parser.add_argument('image', metavar='image', type=str,
-                    help='image to process')
+                    help='path to image to process')
 parser.add_argument('-t', '--template', metavar='template', type=str, default="logo.jpg",
-                    help='image to process')
+                    help='path to logo to process (or folder with templates for "TEMPLATE" algorithm)')
 parser.add_argument('-a', '--algorithm', metavar="algorithm", type=str, default="OBR",
-                    help='algorithm to use')
+                    help='algorithm to use ("OBR", "AKAZE" or "TEMPLATE")')
 parser.add_argument('--debug', action='store_true')
 
 available_algorithms = {"OBR": algorithms.obr.check,
                         "AKAZE": algorithms.akaze.check,
-                        "BRISK": algorithms.brisk.check
+                        "TEMPLATE": algorithms.template.check
                         }
 
 
