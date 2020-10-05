@@ -1,18 +1,14 @@
 import cv2
-import sys
-import cv2
-import imutils
-import numpy as np
 import matplotlib.pyplot as plt
 
 
-def check(logo_path: str, image_path: str) -> bool:
+def check(logo_path: str, image_path: str, debug: bool) -> bool:
     logo = cv2.imread(logo_path)
     logo = cv2.resize(logo, (0, 0), fx=0.4, fy=0.4)
 
     image = cv2.imread(image_path)
 
-    h, w,m = image.shape
+    h, w, m = image.shape
 
     if h > 1000:
         image = cv2.resize(image, (0, 0), fx=0.7, fy=0.7)
@@ -22,10 +18,9 @@ def check(logo_path: str, image_path: str) -> bool:
     _, mask = cv2.threshold(grey_image, 220, 220, cv2.THRESH_BINARY_INV)
     _, mask_l = cv2.threshold(grey_logo, 230, 255, cv2.THRESH_BINARY_INV)
 
-    #mask_l = cv2.Canny(mask_l, 689, 1322)
+    # mask_l = cv2.Canny(mask_l, 689, 1322)
     canny_image = cv2.Canny(mask, 689, 1322)
     (tH, tW) = canny_image.shape[:2]
-
 
     while True:
         mask_l = cv2.resize(mask_l, (0, 0), fx=0.95, fy=0.95)
@@ -40,18 +35,18 @@ def check(logo_path: str, image_path: str) -> bool:
 
         bottom_right = (top_left[0] + width, top_left[1] + height)
         newImage = mask.copy()
-        cv2.rectangle(newImage, top_left, bottom_right, (255, 0,0 ), 2)
+        cv2.rectangle(newImage, top_left, bottom_right, (255, 0, 0), 2)
 
-        cv2.imshow("Matched image", newImage)
-        cv2.imshow('fff',mask_l)
-        cv2.waitKey()
-        cv2.destroyAllWindows()
+        if debug:
+            cv2.imshow("Matched image", newImage)
+            cv2.imshow('fff', mask_l)
+            cv2.waitKey()
+            cv2.destroyAllWindows()
+
         h, w = mask_l.shape
 
         if h < 150:
             break
-    return
-
 
     canny_image = cv2.Canny(mask, 689, 1322)
     (tH, tW) = canny_image.shape[:2]
@@ -68,10 +63,10 @@ def check(logo_path: str, image_path: str) -> bool:
     matches = bf.match(des1, des2)
     matches = sorted(matches, key=lambda x: x.distance)
 
-    match_img = cv2.drawMatches(canny_image, kp1, canny_logo, kp2, matches, None)
-    cv2.imshow('Matches', match_img)
-    cv2.imshow('Matchs', mask)
-
-    cv2.waitKey()
+    if debug:
+        match_img = cv2.drawMatches(canny_image, kp1, canny_logo, kp2, matches, None)
+        cv2.imshow('Matches', match_img)
+        cv2.imshow('Matchs', mask)
+        cv2.waitKey()
 
     return False
