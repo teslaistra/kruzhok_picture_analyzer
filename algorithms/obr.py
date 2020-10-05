@@ -1,12 +1,8 @@
 import cv2
-import sys
-import cv2
-import imutils
-import numpy as np
 import matplotlib.pyplot as plt
 
 
-def check(logo_path: str, image_path: str) -> bool:
+def check(logo_path: str, image_path: str, debug: bool) -> bool:
     # подгружаем лого, и целевое изображение
     # масштабируя его под адекватный размер для удобного вывода
     logo = cv2.imread(logo_path)
@@ -31,6 +27,7 @@ def check(logo_path: str, image_path: str) -> bool:
     _, mask = cv2.threshold(grey_image, 220, 220, cv2.THRESH_BINARY_INV)
     _, mask_l = cv2.threshold(grey_logo, 230, 255, cv2.THRESH_BINARY_INV)
 
+    # mask_l = cv2.Canny(mask_l, 689, 1322)
     # канни-маска для изображения
     # mask_l = cv2.Canny(mask_l, 689, 1322)
     canny_image = cv2.Canny(mask, 689, 1322)
@@ -49,17 +46,18 @@ def check(logo_path: str, image_path: str) -> bool:
 
         top_left = min_loc  # Change to max_loc for all except for TM_SQDIFF
         height, width = mask_l.shape[::]
-        print(width)
         if width > 0:
             return True
         bottom_right = (top_left[0] + width, top_left[1] + height)
         newImage = mask.copy()
         cv2.rectangle(newImage, top_left, bottom_right, (255, 0, 0), 2)
 
-        cv2.imshow("Matched image", newImage)
-        cv2.imshow('fff', mask_l)
-        cv2.waitKey()
-        cv2.destroyAllWindows()
+        if debug:
+            cv2.imshow("Matched image", newImage)
+            cv2.imshow('fff', mask_l)
+            cv2.waitKey()
+            cv2.destroyAllWindows()
+
         h, w = mask_l.shape
 
         #если лого совсем крошечный, то уходим
@@ -93,5 +91,10 @@ def check(logo_path: str, image_path: str) -> bool:
     cv2.imshow('Matchs', mask)
 
     cv2.waitKey()
+    if debug:
+        match_img = cv2.drawMatches(canny_image, kp1, canny_logo, kp2, matches, None)
+        cv2.imshow('Matches', match_img)
+        cv2.imshow('Matchs', mask)
+        cv2.waitKey()
 
     return False
