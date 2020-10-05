@@ -36,13 +36,13 @@ def filter_image(image):
 
 
 def check(logo_path: str, image_path: str, debug: bool) -> bool:
-    # Load logo and inverse its colors
+    # Load logo and apply various augmentations
     logo = cv2.imread(logo_path)
     resized_logo = cv2.resize(logo, scaled_size(logo.shape, 25), interpolation=cv2.INTER_CUBIC)
     logo = resized_logo
     logos = [cv2.bitwise_not(resized_logo), resized_logo]
 
-    # Load image, filter and upscale
+    # Load image and apply various augmentations
     image = cv2.imread(image_path)
     size_scales = [scaled_size(image.shape, int(((x * logo.shape[1]) / image.shape[1]) * 100))
                    for x in [16, 14, 12, 10, 8, 6, 2]]
@@ -74,7 +74,7 @@ def check(logo_path: str, image_path: str, debug: bool) -> bool:
         (keypoints_logo, descriptors_logo) = detector.detectAndCompute(current_logo, None)
         (keypoints_image, descriptors_image) = detector.detectAndCompute(current_image, None)
 
-        # Match the features
+        # Match descriptors
         matches = matcher.knnMatch(descriptors_logo, descriptors_image, k=2)
 
         if len(matches) < min_matches:
